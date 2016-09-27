@@ -33,7 +33,10 @@ class HTTPLogstashHandler(logging.Handler, object):
         try:
             import requests
 
-            headers = {'ApiKey': api_key, 'Content-type': 'application/json'}
+            headers = {
+                'ApiKey': self.api_key,
+                'Content-type': 'application/json'
+            }
             data = json.dumps(record.__dict__)
 
             r = requests.post(self.url, data=data, headers=headers)
