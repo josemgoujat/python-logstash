@@ -31,9 +31,9 @@ class HTTPLogstashHandler(logging.Handler, object):
         POST the record to the logstash server as JSON data.
         """
         try:
-            import http.client
+            import httplib
 
-            h = http.client.HTTPConnection(self.host)
+            h = httplib.HTTPConnection(self.host)
             data = json.dumps(record.__dict__)
 
             h.putrequest('POST', '/')
