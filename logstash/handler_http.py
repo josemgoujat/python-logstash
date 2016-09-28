@@ -37,7 +37,7 @@ class HTTPLogstashHandler(logging.Handler, object):
                 'ApiKey': self.api_key,
                 'Content-type': 'application/json'
             }
-            data = json.dumps(record.__dict__)
+            data = self.formatter.format(record)
 
             r = requests.post(self.url, data=data, headers=headers)
         except Exception:
