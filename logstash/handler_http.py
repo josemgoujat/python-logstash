@@ -1,6 +1,9 @@
 import json
 import logging
-from logstash import formatter
+
+from pyres import ResQ
+
+from logstash import formatter, HTTPEmitTask
 
 
 # Derive from object to force a new-style class and thus allow super() to work
@@ -27,18 +30,13 @@ class HTTPLogstashHandler(logging.Handler, object):
 
     def emit(self, record):
         """
-        Emit a record.
-        POST the record to the logstash server API endpoint as JSON data.
+        Prepares the data and enqueues the emission to the logstash server.
         """
-        try:
-            import requests
+        headers = {
+            'ApiKey': self.api_key,
+            'Content-type': 'application/json'
+        }
+        data = self.formatter.format(record)
 
-            headers = {
-                'ApiKey': self.api_key,
-                'Content-type': 'application/json'
-            }
-            data = self.formatter.format(record)
-
-            r = requests.post(self.url, data=data, headers=headers)
-        except Exception:
-            self.handleError(record)
+        res = ResQ()
+        res.enqueue(HTTPEmitTask, self.url, data, headers)
